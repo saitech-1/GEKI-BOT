@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
+import { db } from "../prisma/db.ts";
 
 export const data = new SlashCommandBuilder()
     .setName("profile")
@@ -6,23 +7,54 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(interaction) {
 
-    const username = interaction.user.username;
-    const userId = interaction.user.id;
+    const discordId = interaction.user.id;
 
-    await interaction.reply(
-        `🥋 **GEKI FIGHTER PROFILE**
+    try {
 
-👤 **Username:** ${username}
-🆔 **Discord ID:** ${userId}
+        // Find the GEKI user and load their fighter profile
+        const user = await db.orm.public.User
+            .include("fighterProfile")
+            .where({ discordId })
+            .first();
 
-🌎 **Country:** Not set
-🏯 **Dojo:** Not set
-🎖️ **Grade:** Not set
-⚖️ **Weight Class:** Not set
+        // User does not exist in database
+        if (!user) {
+            await interaction.reply(
+                "❌ You don't have a GEKI profile yet."
+            );
+            return;
+        }
 
-🔥 **GEKI Level:** 1
-⭐ **XP:** 0
+        const profile = user.fighterProfile;
 
-OSU!`
-    );
+        await interaction.reply(
+            `🥋 **GEKI FIGHTER PROFILE**
+
+👤 **Username:** ${user.username}
+🆔 **Discord ID:** ${user.discordId}
+
+🌎 **Country:** ${profile?.country ?? "Not set"}
+🏯 **Branch:** ${profile?.branch ?? "Not set"}
+🎖️ **Grade:** ${profile?.grade ?? "Not set"}
+⚖️ **Weight Class:** ${profile?.weightClass ?? "Not set"}
+⏱️ **Training:** ${profile?.yearsTraining ?? "Not set"} years
+
+📝 **Bio:** ${profile?.bio ?? "Not set"}
+
+🔥 **GEKI Level:** ${user.level}
+⭐ **XP:** ${user.xp}
+
+${profile?.verified ? "🟢 **Profile verified**" : "⚪ **Profile not verified**"}
+
+**OSU!**`
+        );
+
+    } catch (error) {
+
+        console.error("❌ Failed to load profile:", error);
+
+        await interaction.reply(
+            "❌ Something went wrong while loading your profile."
+        );
+    }
 }

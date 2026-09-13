@@ -8,6 +8,7 @@ import {
 
 import fs from "node:fs";
 import path from "node:path";
+import http from "node:http";
 
 import {
     fileURLToPath,
@@ -21,6 +22,30 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
+/* =========================
+   RENDER HEALTH SERVER
+========================= */
+
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer((req, res) => {
+
+    res.writeHead(200, {
+        "Content-Type": "text/plain"
+    });
+
+    res.end("🥋 GEKI BOT ONLINE");
+});
+
+server.listen(PORT, () => {
+
+    console.log(
+        `🌐 Health server running on port ${PORT}`
+    );
+
+});
 
 
 /* =========================
@@ -123,11 +148,29 @@ for (const file of eventFiles) {
     );
 }
 
-
 /* =========================
-   LOGIN
+   ERROR HANDLING
 ========================= */
 
-client.login(
-    process.env.DISCORD_TOKEN
-);
+client.on("error", (error) => {
+    console.error("❌ Discord client error:", error);
+});
+
+client.on("shardError", (error) => {
+    console.error("❌ Discord shard error:", error);
+});
+
+process.on("unhandledRejection", (error) => {
+    console.error("❌ Unhandled promise rejection:", error);
+});
+
+process.on("uncaughtException", (error) => {
+    console.error("❌ Uncaught exception:", error);
+});
+
+
+/* =========================
+   DISCORD LOGIN
+========================= */
+
+client.login(process.env.DISCORD_TOKEN);

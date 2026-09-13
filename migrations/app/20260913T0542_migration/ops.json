@@ -1,0 +1,362 @@
+[
+  {
+    "id": "table.xpTransaction",
+    "label": "Create table \"xpTransaction\"",
+    "summary": "Creates table \"xpTransaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "xpTransaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"xpTransaction\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"xpTransaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"xpTransaction\"",
+        "sql": "CREATE TABLE \"public\".\"xpTransaction\" (\n  \"amount\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"reason\" text NOT NULL,\n  \"userId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"xpTransaction\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"xpTransaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.user.level",
+    "label": "Add column \"level\" to \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "level",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"level\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "level"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"level\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD COLUMN \"level\" int4 DEFAULT 1 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"level\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "level"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.user.xp",
+    "label": "Add column \"xp\" to \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "xp",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"xp\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "xp"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"xp\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD COLUMN \"xp\" int4 DEFAULT 0 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"xp\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "user",
+          "xp"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.xpTransaction.xpTransaction_createdAt_idx_9575dbd7",
+    "label": "Create index \"xpTransaction_createdAt_idx_9575dbd7\" on \"xpTransaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "xpTransaction_createdAt_idx_9575dbd7",
+        "table": "xpTransaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"xpTransaction_createdAt_idx_9575dbd7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"xpTransaction_createdAt_idx_9575dbd7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"xpTransaction_createdAt_idx_9575dbd7\"",
+        "sql": "CREATE INDEX \"xpTransaction_createdAt_idx_9575dbd7\" ON \"public\".\"xpTransaction\" (\"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"xpTransaction_createdAt_idx_9575dbd7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"xpTransaction_createdAt_idx_9575dbd7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.xpTransaction.xpTransaction_userId_idx_a489d58a",
+    "label": "Create index \"xpTransaction_userId_idx_a489d58a\" on \"xpTransaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "xpTransaction_userId_idx_a489d58a",
+        "table": "xpTransaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"xpTransaction_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"xpTransaction_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"xpTransaction_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"xpTransaction_userId_idx_a489d58a\" ON \"public\".\"xpTransaction\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"xpTransaction_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"xpTransaction_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.xpTransaction.xpTransaction_userId_fkey",
+    "label": "Add foreign key \"xpTransaction_userId_fkey\" on \"xpTransaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "xpTransaction_userId_fkey",
+        "table": "xpTransaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"xpTransaction_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "xpTransaction_userId_fkey",
+          "public",
+          "\"public\".\"xpTransaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"xpTransaction_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"xpTransaction\"\nADD CONSTRAINT \"xpTransaction_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"xpTransaction_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "xpTransaction_userId_fkey",
+          "public",
+          "\"public\".\"xpTransaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.fighterProfile",
+    "label": "Enable row-level security on \"fighterProfile\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "fighterProfile"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"fighterProfile\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "fighterProfile"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"fighterProfile\"",
+        "sql": "ALTER TABLE \"public\".\"fighterProfile\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"fighterProfile\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "fighterProfile"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.user",
+    "label": "Enable row-level security on \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"user\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "user"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"user\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"user\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "user"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.xpTransaction",
+    "label": "Enable row-level security on \"xpTransaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "xpTransaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"xpTransaction\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "xpTransaction"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"xpTransaction\"",
+        "sql": "ALTER TABLE \"public\".\"xpTransaction\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"xpTransaction\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "xpTransaction"
+        ]
+      }
+    ]
+  }
+]

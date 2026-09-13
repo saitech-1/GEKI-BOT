@@ -1,0 +1,52 @@
+// use prisma-next
+model User {
+  id             Int             @id(map: "user_pkey") @default(autoincrement())
+  createdAt      Timestamptz     @default(now())
+  discordId      String          @unique(map: "user_discordId_key")
+  updatedAt      Timestamptz
+  username       String
+
+  xp             Int             @default(0)
+  level          Int             @default(1)
+
+  fighterProfile FighterProfile?
+  xpTransactions XPTransaction[]
+
+  @@rls
+  @@map("user")
+}
+
+model FighterProfile {
+  id            Int         @id(map: "fighterProfile_pkey") @default(autoincrement())
+  bio           String?
+  branch        String?
+  country       String?
+  createdAt     Timestamptz @default(now())
+  dojo          String?
+  grade         String?
+  updatedAt     Timestamptz
+  userId        Int         @unique(map: "fighterProfile_userId_key")
+  verified      Boolean     @default(false)
+  weightClass   String?
+  yearsTraining Int?
+
+  user          User        @relation(fields:[userId], references:[id], map: "fighterProfile_userId_fkey")
+
+  @@rls
+  @@map("fighterProfile")
+}
+
+model XPTransaction {
+  id        Int         @id @default(autoincrement())
+  userId    Int
+  amount    Int
+  reason    String
+  createdAt Timestamptz @default(now())
+
+  user      User        @relation(fields:[userId], references:[id])
+
+  @@index([userId])
+  @@index([createdAt])
+  @@rls
+  @@map("xpTransaction")
+}
